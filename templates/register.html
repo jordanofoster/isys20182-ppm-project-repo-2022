@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="U-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+	<title>Register</title>
+	
+	<link rel="shortcut icon" href="../static/favicon.png">
+	<link rel="stylesheet" href="{{url_for('static', filename='styles.css')}}">
+	
+</head>
+
+<body>
+
+	<p class="center">
+		<img src="../static/logo-600px.png" alt="Flower Pod Logo" />
+	</p>
+	
+	<h1>Register Account</h1>
+	
+	<form class="center" method="POST" action="">
+	
+		{{ form.hidden_tag() }}
+		
+		<h2>Username</h2>
+		{{ form.username(style='height: 80px;', id='inputBox')}}
+		
+		<br>
+		
+		<h2>Password</h2>
+		{{ form.password(style='height: 80px;', id='inputBox')}}
+		
+		<br><br>
+		{{ form.submit(style='height: 60px; width: 160px;') }}
+		<br>
+	</form>
+	
+	<br>
+	
+	<p class="center">
+		<a href="{{url_for('login')}}">Already have an account?</a><br><br>
+		<a href="{{url_for('home')}}">Go Back</a><br>
+	</p>
+	
+	
+</body>
+
+</html>

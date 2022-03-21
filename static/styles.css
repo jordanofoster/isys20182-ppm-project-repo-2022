@@ -1,0 +1,22 @@
+
+body {
+	font-family: Arial;
+}
+
+.center {
+	text-align: center;
+}
+
+#inputBox {
+	font-size: 60px;
+}
+
+h1 {
+	font-size: 75px;
+	text-align: center;
+}
+
+h2 {
+	font-size: 40px;
+	text-align: center;
+}

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+	<meta charset="UTF-8">
+	<meta http-equiv="U-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+	<title>Flower Pod Home</title>
+	
+	<link rel="shortcut icon" href="../static/favicon.png">
+	<link rel="stylesheet" href="{{url_for('static', filename='styles.css')}}">
+	
+</head>
+
+<body>
+	<h1 class="center">ReachUK</h1>
+	
+	<p class="center">
+		<img src="../static/logo-600px.png" alt="Flower Pod Logo" />
+		<br><br>
+		<a href="{{url_for('login')}}">Sign in to your account</a>
+		<br><br>
+		<a href="{{url_for('register')}}">Create an account</a>
+	</p>
+</body>
+
+</html>
