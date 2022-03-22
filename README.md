@@ -15,3 +15,6 @@ Where possible, **please attempt to do the following** to make things easier whe
 - Feel free to actively make documentation using the Wiki included in this repository; this will make it easier when having to make it for the actual coursework document, and makes it easier for peers to see how something works without having to trawl through code.
 
 This `README` is by no means a final version; feel free to make changes if you think there is something else that needs to be added, or a way to mention things more cleanly. Since this file doesn't actually affect the program coursework itself either, committing straight to `main` isn't that bad (although it might cause conflicts for people who have branched the repository prior - in that case, just prioritise the newest version of `README`).
+
+For the python code, install required dependencies in cmd using the following command:
+- pip install flask flask_sqlalchemy flask_login flask_bcrypt flask_wtf wtforms
