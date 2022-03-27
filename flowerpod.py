@@ -55,10 +55,10 @@ class LoginForm(FlaskForm):
     password = PasswordField(validators=[InputRequired(), Length(min=4, max=20)])
     submit = SubmitField("Login")
     
-#Default URL returns home.html
+#Default URL returns mainpage.html
 @app.route("/")
-def home():
-    return render_template('home.html')
+def mainPage():
+    return render_template('mainPage.html')
 
 
 @app.route("/login", methods=['GET', 'POST'])
@@ -73,22 +73,21 @@ def login():
             
             if bcrypt.check_password_hash(user.password, form.password.data):
                 login_user(user)
-                return redirect(url_for('dashboard'))
+                return redirect(url_for('home'))
             
     return render_template('login.html', form=form)
 
 
-@app.route("/dashboard", methods=['GET', 'POST'])
+@app.route("/home", methods=['GET', 'POST'])
 @login_required
-def dashboard():
-    return render_template('dashboard.html')
+def home():
+    return render_template('home.html')
 
 @app.route("/logout", methods=['GET', 'POST'])
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('login'))
-
+    return redirect(url_for('mainPage'))
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():

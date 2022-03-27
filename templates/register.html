@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="centerHTML">
 <head>
 	<meta charset="UTF-8">
 	<meta http-equiv="U-UA-Compatible" content="IE=edge">
@@ -12,11 +12,15 @@
 	
 </head>
 
-<body>
+<body class="centerBody">
+	
 
-	<p class="center">
+	<div class ="center">
+		
 		<img src="../static/logo-600px.png" alt="Flower Pod Logo" />
-	</p>
+		
+	</div>
+
 	
 	<h1>Register Account</h1>
 	
@@ -25,26 +29,24 @@
 		{{ form.hidden_tag() }}
 		
 		<h2>Username</h2>
-		{{ form.username(style='height: 80px;', id='inputBox')}}
-		
-		<br>
+		{{ form.username(style='height: 260%; width: 60%', id='inputBox')}}
 		
 		<h2>Password</h2>
-		{{ form.password(style='height: 80px;', id='inputBox')}}
+		{{ form.password(style='height: 260%; width: 60%', id='inputBox')}}
 		
 		<br><br>
-		{{ form.submit(style='height: 60px; width: 160px;') }}
-		<br>
+		{{ form.submit(style='height: 60px; width: 30%;') }}
+		
 	</form>
 	
-	<br>
-	
-	<p class="center">
-		<a href="{{url_for('login')}}">Already have an account?</a><br><br>
-		<a href="{{url_for('home')}}">Go Back</a><br>
-	</p>
-	
-	
+	<div class ="center">
+			
+		<p><a id="hLink" href="{{url_for('login')}}">Already have an account?</a></p>
+			
+		<p><a id="hLink" href="{{url_for('mainPage')}}">Go back</a></p>
+			
+	</div>
+		
 </body>
 
 </html>
