@@ -18,3 +18,4 @@ This `README` is by no means a final version; feel free to make changes if you t
 
 For the python code, install required dependencies in cmd using the following command:
 - pip install flask flask_sqlalchemy flask_login flask_bcrypt flask_wtf wtforms
+This is subejct to change and may need updating throughout the development of the app.
