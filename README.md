@@ -16,6 +16,5 @@ Where possible, **please attempt to do the following** to make things easier whe
 
 This `README` is by no means a final version; feel free to make changes if you think there is something else that needs to be added, or a way to mention things more cleanly. Since this file doesn't actually affect the program coursework itself either, committing straight to `main` isn't that bad (although it might cause conflicts for people who have branched the repository prior - in that case, just prioritise the newest version of `README`).
 
-For the python code, install required dependencies in cmd using the following command:
+For the python code, install required dependencies in cmd using the following command (Subject to change and may need updating through development):
 - pip install flask flask_sqlalchemy flask_login flask_bcrypt flask_wtf wtforms
-This is subejct to change and may need updating throughout the development of the app.
