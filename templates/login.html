@@ -21,23 +21,25 @@
 		
 	</div>
 
+	<div class="form">
 	
-	<h1>Account Login</h1>
-	
-	<form class="center" method="POST" action="">
-	
-		{{ form.hidden_tag() }}
+		<h1>Account Login</h1>
 		
-		<h2>Username</h2>
-		{{ form.username(style='height: 260%; width: 60%', id='inputBox')}}
+		<form method="POST" action="">
 		
-		<h2>Password</h2>
-		{{ form.password(style='height: 260%; width: 60%', id='inputBox')}}
+			{{ form.hidden_tag() }}
+			
+			<h2>Username</h2>
+			{{ form.username(class='inputBox') }}
+			
+			<h2>Password</h2>
+			{{ form.password(class='inputBox') }}
+			
+			{{ form.submit(class='submit') }}
+			
+		</form>
 		
-		<br><br>
-		{{ form.submit(style='height: 60px; width: 30%;') }}
-		
-	</form>
+	</div>
 	
 	<div class ="center">
 			
