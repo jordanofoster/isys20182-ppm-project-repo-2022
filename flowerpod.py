@@ -1,10 +1,12 @@
-from flask import Flask, render_template, url_for, redirect, flash
+from flask import Flask, render_template, url_for, redirect, request, flash
+from flask_cors import cross_origin
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import InputRequired, Length, ValidationError
 from flask_bcrypt import Bcrypt
+from tts import text_to_speech
 
 #Constructor
 app = Flask(__name__)
@@ -54,11 +56,25 @@ class LoginForm(FlaskForm):
     username = StringField(validators=[InputRequired(), Length(min=4, max=20)])
     password = PasswordField(validators=[InputRequired(), Length(min=4, max=20)])
     submit = SubmitField("Login")
+
+class MainPageForm(FlaskForm):
+    submit = SubmitField("TTS")
     
 #Default URL returns mainpage.html
-@app.route("/")
+@app.route("/", methods=['GET', 'POST'])
+@cross_origin()
 def mainPage():
-    return render_template('mainPage.html')
+    form = MainPageForm()
+    
+    if request.method == 'POST':
+        text = "Welcome to the FlowerPod Website."
+        text += " Here you can find gardening guides, tips and tricks!"
+        text += " Make an account or sign in to get started."
+        text_to_speech(text, "Male")
+        
+        return render_template('mainPage.html', form=form)
+    
+    return render_template('mainPage.html', form=form)
 
 
 @app.route("/login", methods=['GET', 'POST'])
