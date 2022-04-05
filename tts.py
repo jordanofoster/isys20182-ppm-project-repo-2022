@@ -18,7 +18,7 @@ def text_to_speech(text, gender):
     engine = pyttsx3.init()
 
     # Setting up voice rate
-    engine.setProperty('rate', 100)
+    engine.setProperty('rate', 115)
 
     # Setting up volume level  between 0 and 1
     engine.setProperty('volume', 0.8)

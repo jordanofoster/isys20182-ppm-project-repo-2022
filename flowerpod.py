@@ -20,7 +20,6 @@ bcrypt = Bcrypt(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SECRET_KEY'] = '\xef;\x96=\x11DE\xe2S\x91\x8a2'
 
-
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
@@ -58,7 +57,7 @@ class LoginForm(FlaskForm):
     submit = SubmitField("Login")
 
 class MainPageForm(FlaskForm):
-    submit = SubmitField("TTS")
+    submit = SubmitField("")
     
 #Default URL returns mainpage.html
 @app.route("/", methods=['GET', 'POST'])
