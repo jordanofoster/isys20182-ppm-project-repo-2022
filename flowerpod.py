@@ -98,6 +98,11 @@ def login():
 def home():
     return render_template('home.html')
 
+@app.route("/new-guide", methods=['GET', 'POST'])
+@login_required
+def newGuide():
+    return render_template('newGuide.html')
+
 @app.route("/logout", methods=['GET', 'POST'])
 @login_required
 def logout():

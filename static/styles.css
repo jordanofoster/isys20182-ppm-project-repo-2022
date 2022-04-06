@@ -76,8 +76,53 @@ h2
 .menu
 {
   text-align:center;
-  margin:0;
+  margin:0;	
 }
+
+.divider
+{
+	margin: 0;
+	height: calc(36.6px + 8px + 2.25vh + 2.25vh);
+}
+
+.minPage {
+	margin: auto;
+	min-height: calc(100vh - (2 * (36.6px + 8px + 2.25vh + 2.25vh)));
+	float: left;
+	width: 100vw;
+}
+
+.guideBox
+{
+	text-align: center;
+	width: 90vw;
+	height: 25vw;
+	margin: 0;
+	background-color: white;
+	margin-top: 2.5vh;
+	margin-bottom: 2.5vh;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.gbImage {
+	display: inline-block;
+	background-color: black;
+	height: 20vw;
+	width: 20vw;
+	margin-top: 2.5vw;
+	margin-right: 5px;
+	}
+
+.gbText {
+	display: inline-block;
+	background-color: red;		
+	height: 20vw;
+	width: 65vw;
+	margin-top: 2.5vw;
+	margin-left: 5px;
+}
+
 
 .button
 {
@@ -86,15 +131,15 @@ h2
   color:#fff;
   text-decoration:none;
   text-align:center;
-  font-size:3vh;
+  font-size:32px;
   width:50%;
   display:inline-block;
-  padding-top:3vw;
-  padding-bottom:3vw;
+  padding-top:2.25vh;
+  padding-bottom:2.25vh;
   background-color:#df5c48;
   box-sizing:border-box;
   border:4px solid #b24a3a;
-  margin:0;
+  margin:0;	
   position:relative;
   
 }
@@ -108,7 +153,6 @@ h2
 {
   background-color:#d68278;
 }
-
 
 .wide
 {

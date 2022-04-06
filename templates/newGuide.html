@@ -6,7 +6,7 @@
 	<meta http-equiv="U-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	
-	<title>Home</title>
+	<title>New Guide</title>
 	
 	<link rel="shortcut icon" href="../static/favicon.png">
 	<link rel="stylesheet" href="{{url_for('static', filename='styles.css')}}">
@@ -19,20 +19,15 @@
 	
 		<nav class="menu">	
 		
-			<a class="button" href="{{url_for('home')}}">Home</a><a class="button" href="{{url_for('newGuide')}}">New Guide</a>				
+			<a class="button" href="{{url_for('home')}}">Home</a><a class="button" href="{{url_for('newGuide')}}">New Guide</a>			
 		
 		</nav>
 		
 	</div>
 	
-	<div class="minPage">
 	
-		<div class="guideBox">
-			<div class="gbImage">		</div>		<div class="gbText">		</div>
-		</div>
-		
-	</div>
-
+	
+	
 	<nav class="menu">
 		<a class="button wide" href="{{url_for('logout')}}">Click to Logout</a>
 	</nav>
