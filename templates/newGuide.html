@@ -27,7 +27,20 @@
 	
 	<div class="minPage">
 	
+		<form method="POST" action="">
 
+			<h3>Title</h3>
+			{{ form.title(class='inputBox') }}
+			
+			<h3>Creator</h3>
+			{{ form.creator(class='inputBox') }}
+			
+			<h3>Content</h3>
+			{{ form.content(class='inputBox') }}
+			
+			{{ form.submit(class='submit') }}
+			
+		</form>
 		
 	</div>	
 	

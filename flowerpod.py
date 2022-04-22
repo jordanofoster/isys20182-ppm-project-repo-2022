@@ -14,11 +14,13 @@ app = Flask(__name__)
 #Setting up static folder for images, css etc.
 app.static_folder = 'static'
 
-db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+app.config['SQLALCHEMY_BINDS'] = {'Posts' : 'sqlite:///posts.db'}
 app.config['SECRET_KEY'] = '\xef;\x96=\x11DE\xe2S\x91\x8a2'
+
+db = SQLAlchemy(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -38,6 +40,13 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(20), nullable=False, unique=True)
     password = db.Column(db.String(80), nullable=False)
 
+class Posts(db.Model):
+    __bind_key__ = 'Posts'
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(50))
+    creator = db.Column(db.String(50))
+    content = db.Column(db.Text)
+
 #Register form where username/password are inputboxes and submit is a button.
 class RegisterForm(FlaskForm):
     username = StringField(validators=[InputRequired(), Length(min=4, max=20)])
@@ -55,6 +64,12 @@ class LoginForm(FlaskForm):
     username = StringField(validators=[InputRequired(), Length(min=4, max=20)])
     password = PasswordField(validators=[InputRequired(), Length(min=4, max=20)])
     submit = SubmitField("Login")
+
+class NewGuideForm(FlaskForm):
+    title = StringField(validators=[InputRequired(), Length(min=5, max=50)])
+    creator = StringField(validators=[InputRequired(), Length(min=5, max=30)])
+    content = StringField(validators=[InputRequired(), Length(min=5)])
+    submit = SubmitField("Create")
 
 class MainPageForm(FlaskForm):
     submit = SubmitField("")
@@ -101,7 +116,15 @@ def home():
 @app.route("/new-guide", methods=['GET', 'POST'])
 @login_required
 def newGuide():
-    return render_template('newGuide.html')
+    form = NewGuideForm()
+
+    if request.method == 'POST':
+        new_post = Posts(title=form.title.data, creator=form.creator.data, content=form.content.data)
+        db.session.add(new_post)
+        db.session.commit()
+        return redirect(url_for('home'))
+            
+    return render_template('newGuide.html', form=form)
 
 @app.route("/logout", methods=['GET', 'POST'])
 @login_required
