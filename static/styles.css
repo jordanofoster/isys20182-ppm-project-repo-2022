@@ -40,6 +40,13 @@ h2
   color:#FFF;
 }
 
+h3 {
+  font-size: 300%;
+  text-align: center;
+  color: #FFF;
+  margin-top: 8.5vw;
+}
+
 .centerHTML,.centerBody
 {
   height:100%;
@@ -98,7 +105,7 @@ h2
 	width: 92vw;
 	height: 25vw;
 	margin: 0;
-	background-color: white;
+	background-color:#df5c48;
 	margin-top: 2.5vh;
 	margin-bottom: 2.5vh;
 	margin-left: auto;
@@ -112,6 +119,7 @@ h2
 	width: 20vw;
 	margin-top: 2.5vw;
 	margin-right: 5px;
+  overflow: auto;
 	}
 
 .gbText {

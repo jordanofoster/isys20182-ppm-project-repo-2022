@@ -1,12 +1,21 @@
+import os
 from flask import Flask, render_template, url_for, redirect, request, flash
 from flask_cors import cross_origin
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
+from flask_wtf.file import FileRequired, FileAllowed
+from wtforms import StringField, PasswordField, FileField, SubmitField
 from wtforms.validators import InputRequired, Length, ValidationError
+import flask_wtf
+import wtforms
 from flask_bcrypt import Bcrypt
 from tts import text_to_speech
+from werkzeug.utils import secure_filename
+
+# Werkzeug vars
+UPLOAD_FOLDER = '/static/guides/images'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 #Constructor
 app = Flask(__name__)
@@ -19,6 +28,7 @@ bcrypt = Bcrypt(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_BINDS'] = {'Posts' : 'sqlite:///posts.db'}
 app.config['SECRET_KEY'] = '\xef;\x96=\x11DE\xe2S\x91\x8a2'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 db = SQLAlchemy(app)
 
@@ -45,7 +55,11 @@ class Posts(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(50))
     creator = db.Column(db.String(20))
-    content = db.Column(db.Text)
+    image = db.Column(db.String)
+    content = db.Column(db.String)
+
+#Creating databases
+db.create_all()
 
 #Register form where username/password are inputboxes and submit is a button.
 class RegisterForm(FlaskForm):
@@ -68,6 +82,7 @@ class LoginForm(FlaskForm):
 class NewGuideForm(FlaskForm):
     title = StringField(validators=[InputRequired(), Length(min=5, max=50)])
     creator = StringField(validators=[InputRequired(), Length(min=5, max=30)])
+    image = FileField(validators=[FileRequired()])
     content = StringField(validators=[InputRequired(), Length(min=5)])
     submit = SubmitField("Create")
 
@@ -89,7 +104,6 @@ def mainPage():
         return render_template('mainPage.html', form=form)
     
     return render_template('mainPage.html', form=form)
-
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
@@ -113,18 +127,27 @@ def login():
 def home():
     posts = Posts.query.all()
 
-    
     return render_template('home.html', posts=posts)
 
+def allowed_file(filename):
+    return "." in filename and \
+        filename.rsplit('.',1)[1].lower() in ALLOWED_EXTENSIONS
+        
 @app.route("/new-guide", methods=['GET', 'POST'])
 @login_required
 def newGuide():
     form = NewGuideForm()
 
     if request.method == 'POST':
-        new_post = Posts(title=form.title.data, creator=form.creator.data, content=form.content.data)
+        image_data = form.image.data
+        image_filename = secure_filename(image_data.filename)
+        image_data.save(os.path.join(app.root_path, 'static/guides/images/', image_filename))
+        imageURI = f'/static/guides/images/{image_filename}'
+
+        new_post = Posts(title=form.title.data, creator=form.creator.data, image=imageURI, content = form.content.data)
         db.session.add(new_post)
         db.session.commit()
+
         return redirect(url_for('home'))
             
     return render_template('newGuide.html', form=form)
@@ -135,7 +158,6 @@ def post(post_id):
     post = Posts.query.filter_by(id=post_id).one()
     
     return render_template('post.html', post=post)
-
 
 @app.route("/logout", methods=['GET', 'POST'])
 @login_required

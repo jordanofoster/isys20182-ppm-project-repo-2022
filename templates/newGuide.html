@@ -29,7 +29,7 @@
 	
 		<div class="form">
 	
-			<form method="POST" action="">
+			<form method="POST", enctype="multipart/form-data", action="">
 
 				<h2>Title</h2>
 				{{ form.title(class='inputBox') }}
@@ -37,9 +37,12 @@
 				<h2>Creator</h2>
 				{{ form.creator(class='inputBox') }}
 				
+				<h2>File Upload</h2>
+				{{ form.image(class='File')}}
+
 				<h2>Content</h2>
-				{{ form.content(class='inputBox content') }}
-				
+				{{ form.content(class='inputBox') }}
+
 				{{ form.submit(class='submit') }}
 				
 			</form>
