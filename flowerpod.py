@@ -32,7 +32,7 @@ def load_user(user_id):
 
 #Setting up Database table
 #If DB file is not setup, do as follows:
-#from flowerpod.py import db
+#from flowerpod import db
 #db.create_all()
 #SQLite3 can verify creation of table.
 class User(db.Model, UserMixin):
@@ -44,7 +44,7 @@ class Posts(db.Model):
     __bind_key__ = 'Posts'
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(50))
-    creator = db.Column(db.String(50))
+    creator = db.Column(db.String(20))
     content = db.Column(db.Text)
 
 #Register form where username/password are inputboxes and submit is a button.
@@ -111,7 +111,10 @@ def login():
 @app.route("/home", methods=['GET', 'POST'])
 @login_required
 def home():
-    return render_template('home.html')
+    posts = Posts.query.all()
+
+    
+    return render_template('home.html', posts=posts)
 
 @app.route("/new-guide", methods=['GET', 'POST'])
 @login_required
@@ -125,6 +128,14 @@ def newGuide():
         return redirect(url_for('home'))
             
     return render_template('newGuide.html', form=form)
+
+@app.route("/post/<int:post_id>")
+@login_required
+def post(post_id):
+    post = Posts.query.filter_by(id=post_id).one()
+    
+    return render_template('post.html', post=post)
+
 
 @app.route("/logout", methods=['GET', 'POST'])
 @login_required

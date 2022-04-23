@@ -6,7 +6,7 @@
 	<meta http-equiv="U-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	
-	<title>Home</title>
+	<title>Post</title>
 	
 	<link rel="shortcut icon" href="../static/favicon.png">
 	<link rel="stylesheet" href="{{url_for('static', filename='styles.css')}}">
@@ -27,14 +27,10 @@
 	
 	<div class="minPage">
 	
-	{% for post in posts %}
+		<h1> {{post.title }} </h1>
+		<h1> Made By: {{post.creator }} </h1>
+		<p> {{post.content }} </p>
 	
-		<div class="guideBox">
-			<div class="gbImage"></div><div class="gbText"><h1>{{post.title}}</h1></div>
-		</div>
-		
-	{% endfor %}
-		
 	</div>
 
 	<nav class="menu">

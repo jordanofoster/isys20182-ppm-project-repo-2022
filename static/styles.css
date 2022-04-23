@@ -121,6 +121,7 @@ h2
 	width: 65vw;
 	margin-top: 2.5vw;
 	margin-left: 5px;
+	overflow: auto;
 }
 
 
@@ -164,6 +165,12 @@ h2
 {
   font-size:260%;
   width:80%;
+}
+
+.content
+{
+	font-size: 180%;
+	height: 500px;
 }
 
 .submit
