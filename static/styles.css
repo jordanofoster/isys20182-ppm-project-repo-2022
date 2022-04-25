@@ -1,6 +1,6 @@
 body
 {
-  font-family:Arial;
+  font-family:"Comic Sans MS", "Comic Sans", cursive;
   background-color:#f6d9d6;
   margin:0;
 }
@@ -61,7 +61,7 @@ h3 {
 
 .centerBody
 {
-  font-family:Arial;
+  font-family:"Comic Sans MS", "Comic Sans", cursive;
   background-color:#f6d9d6;
   display:table-cell;
   vertical-align:middle;
@@ -136,7 +136,7 @@ h3 {
 
 .button
 {
-  font-family:Arial;
+  font-family:"Comic Sans MS", "Comic Sans", cursive;
   font-style:none;
   color:#fff;
   text-decoration:none;
@@ -225,7 +225,7 @@ h3 {
 #box p
 {
   font-size:200%;
-  font-family:Arial;
+  font-family:"Comic Sans MS", "Comic Sans", cursive;
   color:#FFF;
 }
 

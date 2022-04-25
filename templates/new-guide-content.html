@@ -30,8 +30,8 @@
 		<div class="form">
 	
 			<form method="POST", enctype="multipart/form-data", action="">
-
-				{% for field in form.captions %}
+				<!-- I don't think we can access this, because we get the form when we send a POST request to the website -->
+				{% for field in form.caption %}
 					{{field.caption(class='inputBox')}}
                 {% endfor %}
 

@@ -95,8 +95,7 @@ class NewGuideForm(FlaskForm):
     submit = SubmitField("Create")
 
 class CaptionForm(Form):
-    image = StringField()
-    caption = StringField(validators=[InputRequired(), Length(min=4)])
+    caption = FieldList(StringField(validators=[InputRequired(), Length(min=1)]))
 
 class MainPageForm(FlaskForm):
     submit = SubmitField("")
@@ -179,6 +178,8 @@ def newGuide():
 @login_required
 def newGuideContent(guide_id):
 
+    form = CaptionForm()
+
     #Only got up to here. Assuming we need to pass
     #GuideImages related to the guide to the HTML file
     #as well as a form so we can get data back 
@@ -188,18 +189,19 @@ def newGuideContent(guide_id):
 
     if request.method == 'POST':
 
-
+        guideContent.update().values(caption=form.caption).where(guideID=guide_id)
+        db.session.commit()
 
         return redirect(url_for('home'))
 
-    return render_template('new-guide-content.html')
-
+    return render_template('new-guide-content.html', form=form)
 
 
 @app.route("/guide/<int:guide_id>")
 @login_required
 def guide(guide_id):
     guide = Guides.query.filter_by(id=guide_id).one()
+    
     
     return render_template('guide.html', guide=guide)
 
