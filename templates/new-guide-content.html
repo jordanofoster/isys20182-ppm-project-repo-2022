@@ -31,11 +31,15 @@
 	
 			<form method="POST", enctype="multipart/form-data", action="">
 				<!-- I don't think we can access this, because we get the form when we send a POST request to the website -->
-				{% for field in form.caption %}
-					{{field.caption(class='inputBox')}}
-                {% endfor %}
+				{% for caption in form.captionList %}
 
-				
+					<!--<img src="file:///{{caption.label}}" > -->
+
+					{{caption(class='inputBox')}}
+					
+				{% endfor %}
+
+				{{ form.submit(class='submit') }}
 			</form>
 			
 		</div>

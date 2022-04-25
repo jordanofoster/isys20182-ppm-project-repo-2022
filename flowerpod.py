@@ -5,7 +5,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileRequired, FileAllowed
-from wtforms import StringField, PasswordField, MultipleFileField, FileField, SubmitField, FieldList, FormField, Form
+from sqlalchemy import null
+from wtforms import StringField, PasswordField, MultipleFileField, FileField, SubmitField, FieldList, FormField, Form, HiddenField
 from wtforms.validators import InputRequired, DataRequired, Length, ValidationError
 import flask_wtf
 import wtforms
@@ -32,9 +33,6 @@ app.config['SECRET_KEY'] = '\xef;\x96=\x11DE\xe2S\x91\x8a2'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 db = SQLAlchemy(app)
-
-global maxEntries
-maxEntires = 0
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -94,12 +92,22 @@ class NewGuideForm(FlaskForm):
     images = MultipleFileField(validators=[FileRequired()])
     submit = SubmitField("Create")
 
-class CaptionForm(Form):
-    caption = FieldList(StringField(validators=[InputRequired(), Length(min=1)]))
+#Form for each individual caption input
+class caption(Form):
+    caption = StringField(validators=[InputRequired()])
 
+#Form for captionForm passed to new-guide-content (hard coded as of now)
+class CaptionForm(FlaskForm):
+
+    captionList = FieldList(FormField(caption))
+    submit = SubmitField("Create")
+
+
+
+    
+    
 class MainPageForm(FlaskForm):
     submit = SubmitField("")
-
 
 #Default URL returns mainpage.html
 @app.route("/", methods=['GET', 'POST'])
@@ -168,7 +176,7 @@ def newGuide():
             db.session.add(new_image)
             db.session.commit()
 
-
+        print(f"Num files: {len(request.files.getlist(form.images.name))}")
         #Return home when finished....
         return redirect(url_for('newGuideContent', guide_id=new_guide.id))
             
@@ -177,32 +185,38 @@ def newGuide():
 @app.route(f"/new-guide-content/<int:guide_id>", methods=['GET', 'POST'])
 @login_required
 def newGuideContent(guide_id):
-
+    
+    guideContent = GuideImages.query.filter_by(guideID=guide_id).all()
     form = CaptionForm()
 
-    #Only got up to here. Assuming we need to pass
-    #GuideImages related to the guide to the HTML file
-    #as well as a form so we can get data back 
-    
-    guideContent = GuideImages.query.filter_by(guideID=guide_id)
-   
+    if request.method == 'GET':
+
+        for i in range(len(guideContent)):
+            form.captionList.append_entry()
+
+        for(guide, entry) in zip(guideContent, form.captionList.entries):
+            entry.label = guide.image
 
     if request.method == 'POST':
 
-        guideContent.update().values(caption=form.caption).where(guideID=guide_id)
-        db.session.commit()
+        for(guide, entry) in zip(guideContent, form.captionList.entries):
+            newCaption = entry.data
+            newCaption = newCaption.get('caption')
+            guide.caption = newCaption
+            db.session.commit()
 
         return redirect(url_for('home'))
 
-    return render_template('new-guide-content.html', form=form)
+    
 
+    return render_template('new-guide-content.html', form=form, guides=guideContent)
 
 @app.route("/guide/<int:guide_id>")
 @login_required
 def guide(guide_id):
     guide = Guides.query.filter_by(id=guide_id).one()
-    
-    
+    guideImages = GuideImages.query.filter_by(guideID=guide_id).all()
+
     return render_template('guide.html', guide=guide)
 
 
