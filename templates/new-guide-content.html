@@ -6,9 +6,9 @@
 	<meta http-equiv="U-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	
-	<title>Post</title>
+	<title>New Guide</title>
 	
-	<link rel="shortcut icon" href="../static/favicon.png"> <!-- "{{url_for('static', filename='favicon.png')}}" -->
+	<link rel="shortcut icon" href="../static/favicon.png">
 	<link rel="stylesheet" href="{{url_for('static', filename='styles.css')}}">
 	
 </head>
@@ -19,7 +19,7 @@
 	
 		<nav class="menu">	
 		
-			<a class="button" href="{{url_for('home')}}">Home</a><a class="button" href="{{url_for('newGuide')}}">New Guide</a>				
+			<a class="button" href="{{url_for('home')}}">Home</a><a class="button" href="{{url_for('newGuide')}}">New Guide</a>			
 		
 		</nav>
 		
@@ -27,12 +27,22 @@
 	
 	<div class="minPage">
 	
-		<h1> {{post.title }} </h1>
-		<h1> Made By: {{post.creator }} </h1>
-		<img src="{{post.image}}" alt="POV: I am stealing your organs">
-		<h1> {{post.content}} </h1>
-	</div>
+		<div class="form">
+	
+			<form method="POST", enctype="multipart/form-data", action="">
 
+				{% for field in form.captions %}
+					{{field.caption(class='inputBox')}}
+                {% endfor %}
+
+				
+			</form>
+			
+		</div>
+		
+	</div>	
+	
+	
 	<nav class="menu">
 		<a class="button wide" href="{{url_for('logout')}}">Click to Logout</a>
 	</nav>

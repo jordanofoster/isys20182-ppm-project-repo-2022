@@ -5,8 +5,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileRequired, FileAllowed
-from wtforms import StringField, PasswordField, FileField, SubmitField
-from wtforms.validators import InputRequired, Length, ValidationError
+from wtforms import StringField, PasswordField, MultipleFileField, FileField, SubmitField, FieldList, FormField, Form
+from wtforms.validators import InputRequired, DataRequired, Length, ValidationError
 import flask_wtf
 import wtforms
 from flask_bcrypt import Bcrypt
@@ -26,11 +26,15 @@ app.static_folder = 'static'
 bcrypt = Bcrypt(app)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
-app.config['SQLALCHEMY_BINDS'] = {'Posts' : 'sqlite:///posts.db'}
+app.config['SQLALCHEMY_BINDS'] = {'Guides' : 'sqlite:///guides.db',
+                                    'GuideImages' : 'sqlite:///guide-images.db'}
 app.config['SECRET_KEY'] = '\xef;\x96=\x11DE\xe2S\x91\x8a2'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 db = SQLAlchemy(app)
+
+global maxEntries
+maxEntires = 0
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -50,13 +54,18 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(20), nullable=False, unique=True)
     password = db.Column(db.String(80), nullable=False)
 
-class Posts(db.Model):
-    __bind_key__ = 'Posts'
+class Guides(db.Model):
+    __bind_key__ = 'Guides'
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(50))
-    creator = db.Column(db.String(20))
+    title = db.Column(db.String(50), nullable=False)
+    creator = db.Column(db.String(20), nullable=False)
+
+class GuideImages(db.Model):
+    __bind_key__ = 'GuideImages'
+    id = db.Column(db.Integer, primary_key=True)
+    guideID = db.Column(db.Integer)
     image = db.Column(db.String)
-    content = db.Column(db.String)
+    caption = db.Column(db.String, nullable=True)
 
 #Creating databases
 db.create_all()
@@ -82,13 +91,17 @@ class LoginForm(FlaskForm):
 class NewGuideForm(FlaskForm):
     title = StringField(validators=[InputRequired(), Length(min=5, max=50)])
     creator = StringField(validators=[InputRequired(), Length(min=5, max=30)])
-    image = FileField(validators=[FileRequired()])
-    content = StringField(validators=[InputRequired(), Length(min=5)])
+    images = MultipleFileField(validators=[FileRequired()])
     submit = SubmitField("Create")
+
+class CaptionForm(Form):
+    image = StringField()
+    caption = StringField(validators=[InputRequired(), Length(min=4)])
 
 class MainPageForm(FlaskForm):
     submit = SubmitField("")
-    
+
+
 #Default URL returns mainpage.html
 @app.route("/", methods=['GET', 'POST'])
 @cross_origin()
@@ -101,9 +114,9 @@ def mainPage():
         text += " Make an account or sign in to get started."
         text_to_speech(text, "Male")
         
-        return render_template('mainPage.html', form=form)
+        return render_template('main-page.html', form=form)
     
-    return render_template('mainPage.html', form=form)
+    return render_template('main-page.html', form=form)
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
@@ -121,43 +134,76 @@ def login():
             
     return render_template('login.html', form=form)
 
-
 @app.route("/home", methods=['GET', 'POST'])
 @login_required
 def home():
-    posts = Posts.query.all()
+    guides = Guides.query.all()
 
-    return render_template('home.html', posts=posts)
+    return render_template('home.html', guides=guides)
 
 def allowed_file(filename):
     return "." in filename and \
         filename.rsplit('.',1)[1].lower() in ALLOWED_EXTENSIONS
         
+
 @app.route("/new-guide", methods=['GET', 'POST'])
 @login_required
 def newGuide():
     form = NewGuideForm()
 
     if request.method == 'POST':
-        image_data = form.image.data
-        image_filename = secure_filename(image_data.filename)
-        image_data.save(os.path.join(app.root_path, 'static/guides/images/', image_filename))
-        imageURI = f'/static/guides/images/{image_filename}'
 
-        new_post = Posts(title=form.title.data, creator=form.creator.data, image=imageURI, content = form.content.data)
-        db.session.add(new_post)
+        new_guide = Guides(title=form.title.data, creator=str(current_user.username))
+        db.session.add(new_guide)
         db.session.commit()
 
-        return redirect(url_for('home'))
-            
-    return render_template('newGuide.html', form=form)
+        pathString = f'{app.root_path}{UPLOAD_FOLDER}/{form.title.data}'
+        os.makedirs(pathString)
 
-@app.route("/post/<int:post_id>")
+        for image in form.images.data:
+            image_filename = secure_filename(image.filename)
+            image.save(os.path.join(pathString, image_filename))
+            imageURI = f'{pathString}/{image_filename}'
+
+            new_image = GuideImages(guideID=new_guide.id, image=imageURI)
+            db.session.add(new_image)
+            db.session.commit()
+
+
+        #Return home when finished....
+        return redirect(url_for('newGuideContent', guide_id=new_guide.id))
+            
+    return render_template('new-guide.html', form=form)
+
+@app.route(f"/new-guide-content/<int:guide_id>", methods=['GET', 'POST'])
 @login_required
-def post(post_id):
-    post = Posts.query.filter_by(id=post_id).one()
+def newGuideContent(guide_id):
+
+    #Only got up to here. Assuming we need to pass
+    #GuideImages related to the guide to the HTML file
+    #as well as a form so we can get data back 
     
-    return render_template('post.html', post=post)
+    guideContent = GuideImages.query.filter_by(guideID=guide_id)
+   
+
+    if request.method == 'POST':
+
+
+
+        return redirect(url_for('home'))
+
+    return render_template('new-guide-content.html')
+
+
+
+@app.route("/guide/<int:guide_id>")
+@login_required
+def guide(guide_id):
+    guide = Guides.query.filter_by(id=guide_id).one()
+    
+    return render_template('guide.html', guide=guide)
+
+
 
 @app.route("/logout", methods=['GET', 'POST'])
 @login_required

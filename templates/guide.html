@@ -6,9 +6,9 @@
 	<meta http-equiv="U-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	
-	<title>Home</title>
+	<title>Guide</title>
 	
-	<link rel="shortcut icon" href="../static/favicon.png">
+	<link rel="shortcut icon" href="../static/favicon.png"> <!-- "{{url_for('static', filename='favicon.png')}}" -->
 	<link rel="stylesheet" href="{{url_for('static', filename='styles.css')}}">
 	
 </head>
@@ -27,23 +27,10 @@
 	
 	<div class="minPage">
 	
-	{% for guide in guides %}
-	
-	<a href={{url_for('guide', guide_id=guide.id) }}>
-	
-		<div class="guideBox">
-			<div class="gbImage">
-
-			</div>
-			<div class="gbText">
-					<h3>{{guide.title}}</h3>
-			</div>
-			
-		</div>
-	</a>
-		
-	{% endfor %}
-		
+		<h1> {{guide.title }} </h1>
+		<h1> Made By: {{guide.creator }} </h1>
+		<img src="{{guide.image}}" >
+		<h1> {{guide.content}} </h1>
 	</div>
 
 	<nav class="menu">
