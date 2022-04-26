@@ -77,6 +77,7 @@ class MyModelView(ModelView):
 
 admin = Admin(app)
 admin.add_view(MyModelView(GuideImages, db.session))
+admin.add_view(MyModelView(Guides, db.session))
 
 #Creating databases
 db.create_all()
