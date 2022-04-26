@@ -5,12 +5,31 @@ body
   margin:0;
 }
 
+td {
+  width: 72%;
+}
+
 img
 {
+  margin:0;
+  width:100%;
+  height:100%;
+  box-sizing: border-box;
+  border: 4px solid #83362a;
+}
+
+input {
+  font-size: 30px;
+  width: 50vw;
+}
+
+.logo {
   margin-top:10px;
   width:90%;
   height:auto;
+  border: none;
 }
+
 
 nav
 {
@@ -23,6 +42,8 @@ nav
 p
 {
   margin:0;
+  font-size: 32px;
+  color: white;
 }
 
 h1
@@ -38,6 +59,13 @@ h2
   font-size:250%;
   text-align:center;
   color:#FFF;
+}
+
+label {
+  font-size: 100%;
+  text-align:center;
+  color: white;
+  display:block;
 }
 
 h3 {
@@ -81,6 +109,12 @@ h3 {
   margin:20px;
 }
 
+.File {
+  color: white;
+  text-align: center;
+  margin-bottom: 3vh;
+}
+
 .menu
 {
   text-align:center;
@@ -111,6 +145,8 @@ h3 {
 	margin-bottom: 2.5vh;
 	margin-left: auto;
 	margin-right: auto;
+  box-sizing: border-box;
+  border: 4px solid #b24a3a;
 }
 
 .gbImage {
@@ -123,14 +159,25 @@ h3 {
   vertical-align: top;
 	}
 
+.thumbnail {
+  max-width: 100% !important;
+  max-height: 100% !important;
+}
+
+.pair {
+  margin-bottom: 80px;
+}
+
 .gbText {
 	display: inline-block;
-	background-color: red;		
+	background-color: #b24a3a;		
 	height: 20vw;
 	width: 65vw;
 	margin-top: 2.5vw;
 	margin-left: 5px;
 	vertical-align: top;
+  box-sizing: border-box;
+  border: 4px solid #83362a;
 }
 
 
@@ -154,6 +201,13 @@ h3 {
   
 }
 
+.delete {
+  background-color: red;
+  margin-top: 12vh;
+  margin-bottom: 9vh;
+  width: 20vw;
+}
+
 .button:link
 {
   color:#fff;
@@ -167,6 +221,7 @@ h3 {
 .wide
 {
   width:100vw;
+  margin-top: 2.5vh;
 }
 
 
@@ -174,6 +229,11 @@ h3 {
 {
   font-size:260%;
   width:80%;
+}
+
+.captionBox {
+  font-size: 250%;
+  width: 100%;
 }
 
 .content
@@ -208,7 +268,14 @@ h3 {
   border-color:#df5c48;
   border-style:solid;
   border-width:30px;
-  margin:30px auto auto;
+  margin:35px auto auto;
+}
+
+.guideForm
+{
+  width:85vw;
+  padding:30px;
+  border: 4px solid #83362a;
 }
 
 #box

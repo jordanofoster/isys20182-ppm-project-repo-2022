@@ -27,17 +27,16 @@
 	
 	<div class="minPage">
 	
-	{% for guide in guides %}
-	
-	<a href={{url_for('guide', guide_id=guide.id) }}>
-	
-		<div class="guideBox">
-			<div class="gbImage">
+	{% for guide in data %} <!--For GUIDE in the DATA list...-->
 
-			</div>
-			<div class="gbText">
-					<h3>{{guide.title}}</h3>
-			</div>
+	<!-- GUIDE.0/1/2/3 = ID/NAME/CREATOR/GUIDEIMAGES   
+		G
+	-->
+	
+	<a href={{url_for('guide', guide_id=guide.0) }}>
+	
+		<div class="guideBox"> <!-- Div is single line for aesthetic + removing white space. (</div><div> need to be touching ?)-->
+			<div class="gbImage"> <img class="thumbnail" src="../{{guide.3.0.image}}"> </div><div class="gbText"> <h3>{{guide.1}}</h3> </div>
 			
 		</div>
 	</a>

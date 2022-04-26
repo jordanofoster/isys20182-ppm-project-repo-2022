@@ -26,12 +26,25 @@
 	</div>
 	
 	<div class="minPage">
-	
-		<h1> {{guide.title }} </h1>
-		<h1> Made By: {{guide.creator }} </h1>
-		<img src="{{guide.image}}" >
-		<h1> {{guide.content}} </h1>
+
+	<!-- GUIDE.0/1/2/3 = ID/NAME/CREATOR/GUIDEIMAGES -->
+		<div class="form guideForm">
+			<h1> {{ guide.title }} </h1>
+			<h1> Made By: {{ guide.creator }} </h1>
+
+			{% for pair in images %}
+				<div class="pair">
+					<img src="{{pair.image}}">
+					<h2> {{pair.caption}} </h2>
+				</div>
+			{% endfor %}
+		</div>
+
 	</div>
+
+	<nav class="menu">
+		<a class="button delete" href="{{url_for('deleteGuide', guide_id=guide.id)}}">!Delete!</a>
+	</nav>
 
 	<nav class="menu">
 		<a class="button wide" href="{{url_for('logout')}}">Click to Logout</a>

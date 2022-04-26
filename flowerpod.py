@@ -1,5 +1,8 @@
 import os
+import shutil
 from flask import Flask, render_template, url_for, redirect, request, flash
+from flask_admin import Admin
+from flask_admin.contrib.sqla import ModelView
 from flask_cors import cross_origin
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
@@ -65,6 +68,16 @@ class GuideImages(db.Model):
     image = db.Column(db.String)
     caption = db.Column(db.String, nullable=True)
 
+class MyModelView(ModelView):
+    def is_accessible(self):
+        return current_user.is_authenticated
+
+    def in_accessible_callback(self, name, **kwargs):
+        return redirect(url_for('login'))
+
+admin = Admin(app)
+admin.add_view(MyModelView(GuideImages, db.session))
+
 #Creating databases
 db.create_all()
 
@@ -96,16 +109,12 @@ class NewGuideForm(FlaskForm):
 class caption(Form):
     caption = StringField(validators=[InputRequired()])
 
-#Form for captionForm passed to new-guide-content (hard coded as of now)
+#Form for captionForm passed to new-guide-content 
 class CaptionForm(FlaskForm):
 
     captionList = FieldList(FormField(caption))
     submit = SubmitField("Create")
 
-
-
-    
-    
 class MainPageForm(FlaskForm):
     submit = SubmitField("")
 
@@ -144,9 +153,21 @@ def login():
 @app.route("/home", methods=['GET', 'POST'])
 @login_required
 def home():
+
     guides = Guides.query.all()
 
-    return render_template('home.html', guides=guides)
+    data, temp = [],[]
+
+    for guide in guides:
+        temp.append(guide.id)
+        temp.append(guide.title)
+        temp.append(guide.creator)
+        temp.append(GuideImages.query.filter_by(guideID=guide.id).all())
+
+        data.append(temp.copy())
+        temp.clear()
+
+    return render_template('home.html', data=data)
 
 def allowed_file(filename):
     return "." in filename and \
@@ -164,19 +185,31 @@ def newGuide():
         db.session.add(new_guide)
         db.session.commit()
 
-        pathString = f'{app.root_path}{UPLOAD_FOLDER}/{form.title.data}'
+        pathString = f'{app.root_path}{UPLOAD_FOLDER}/{form.title.data.replace(" ", "_")}'
         os.makedirs(pathString)
 
         for image in form.images.data:
+            #Created enumerate for count (creates selection order priority..)
+
+            #ISSUE: 
+            #SELECT ORDER OF IMAGES IN FORM DOES NOT AFFECT ORDER IN FLASK.
+            #UPLOAD ORDER IS BASED ON FILEEXPLORER SORT METHOD.
+            #No workarounds found.
+
             image_filename = secure_filename(image.filename)
             image.save(os.path.join(pathString, image_filename))
             imageURI = f'{pathString}/{image_filename}'
+            
+            #REMOVE WHOLE PATH-ONLY UP TO STATIC/../../../imagename.filetype
+            index = imageURI.find("static/")
+            imageURI = imageURI[index-1:]
 
             new_image = GuideImages(guideID=new_guide.id, image=imageURI)
             db.session.add(new_image)
             db.session.commit()
 
         print(f"Num files: {len(request.files.getlist(form.images.name))}")
+
         #Return home when finished....
         return redirect(url_for('newGuideContent', guide_id=new_guide.id))
             
@@ -195,7 +228,7 @@ def newGuideContent(guide_id):
             form.captionList.append_entry()
 
         for(guide, entry) in zip(guideContent, form.captionList.entries):
-            entry.label = guide.image
+            entry.label = "../" + guide.image
 
     if request.method == 'POST':
 
@@ -211,13 +244,48 @@ def newGuideContent(guide_id):
 
     return render_template('new-guide-content.html', form=form, guides=guideContent)
 
+
+@app.route("/guide/<int:guide_id>/delete", methods=['GET', 'POST'])
+@login_required
+def deleteGuide(guide_id):
+    toDelGuide = Guides.query.filter_by(id=guide_id).one()
+    toDelImages = GuideImages.query.filter_by(guideID=guide_id).all()
+
+    title = toDelGuide.title
+    title = title.replace(" ", "_")
+    path = f"{UPLOAD_FOLDER[1:]}/{title}"
+
+    try:
+        shutil.rmtree(path)
+        db.session.delete(toDelGuide)
+        for image in toDelImages:
+            db.session.delete(image)
+        db.session.commit()
+        flash("Guide deleted.")
+
+    except:
+        db.session.delete(toDelGuide)
+        for image in toDelImages:
+            db.session.delete(image)
+        db.session.commit()
+        flash("Guide deleted.")
+
+    return redirect(url_for('home'))
+
+
+
+
+
+
+
+
 @app.route("/guide/<int:guide_id>")
 @login_required
 def guide(guide_id):
-    guide = Guides.query.filter_by(id=guide_id).one()
-    guideImages = GuideImages.query.filter_by(guideID=guide_id).all()
 
-    return render_template('guide.html', guide=guide)
+    guide = Guides.query.filter_by(id=guide_id).one()
+    images = GuideImages.query.filter_by(guideID=guide_id).all()
+    return render_template('guide.html', guide=guide, images=images)
 
 
 

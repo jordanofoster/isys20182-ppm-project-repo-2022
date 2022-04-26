@@ -27,16 +27,17 @@
 	
 	<div class="minPage">
 	
-		<div class="form">
+		<div class="form guideForm">
 	
 			<form method="POST", enctype="multipart/form-data", action="">
 				<!-- I don't think we can access this, because we get the form when we send a POST request to the website -->
 				{% for caption in form.captionList %}
-
-					<!--<img src="file:///{{caption.label}}" > -->
-
-					{{caption(class='inputBox')}}
-					
+				<div class="pair">
+						<img src={{caption.label}} >
+					<div>
+						{{caption(class='captionBox')}}
+					</div>
+				</div>
 				{% endfor %}
 
 				{{ form.submit(class='submit') }}
