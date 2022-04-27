@@ -99,7 +99,7 @@ class RegisterForm(FlaskForm):
 class LoginForm(FlaskForm):
     username = StringField(validators=[InputRequired(), Length(min=4, max=20)])
     password = PasswordField(validators=[InputRequired(), Length(min=4, max=20)])
-    next = HiddenField(validators=[InputRequired()])
+    next = HiddenField()
     submit = SubmitField("Login")
 
 class NewGuideForm(FlaskForm):
@@ -154,16 +154,14 @@ def login():
     
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
-        
+        next_url = request.form.get('next')
         if user:
             
             if bcrypt.check_password_hash(user.password, form.password.data):
                 login_user(user)
-                try:
-                    next_url = request.form.get('next')
+                if next_url:
                     return redirect(next_url)
-                except:
-                    return redirect(url_for('home'))
+                return redirect(url_for('home'))
     
     return render_template('login.html', form=form)
 
@@ -338,7 +336,6 @@ def guide(guide_id):
 
 
 @app.route("/logout", methods=['GET', 'POST'])
-@login_required
 def logout():
     logout_user()
     return redirect(url_for('mainPage'))
