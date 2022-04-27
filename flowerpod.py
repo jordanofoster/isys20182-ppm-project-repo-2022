@@ -116,6 +116,16 @@ class CaptionForm(FlaskForm):
     captionList = FieldList(FormField(caption))
     submit = SubmitField("Create")
 
+class imageCaptionPair(Form):
+    image = FileField()
+    caption = StringField()
+
+class editGuideForm(FlaskForm):
+    title = StringField(validators=[Length(min=5, max=50)])
+    creator = StringField(validators=[Length(min=5, max=30)])
+    listPair = FieldList(FormField(imageCaptionPair))
+    submit = SubmitField("Submit Changes")
+
 class MainPageForm(FlaskForm):
     submit = SubmitField("")
 
@@ -219,7 +229,8 @@ def newGuide():
 @app.route(f"/new-guide-content/<int:guide_id>", methods=['GET', 'POST'])
 @login_required
 def newGuideContent(guide_id):
-    
+
+    guide = Guides.query.filter_by(id=guide_id).one()
     guideContent = GuideImages.query.filter_by(guideID=guide_id).all()
     form = CaptionForm()
 
@@ -273,8 +284,39 @@ def deleteGuide(guide_id):
 
     return redirect(url_for('home'))
 
+@app.route("/guide/<int:guide_id>/edit", methods=['GET', 'POST'])
+@login_required
+def editGuide(guide_id):
 
+    guide = Guides.query.filter_by(id=guide_id).one()
+    images = GuideImages.query.filter_by(guideID=guide_id).all()
+    form = editGuideForm()
+    
+    if request.method == 'GET':
+        form.title.data = guide.title
+        form.creator.data = guide.creator
 
+        for i in range(len(images)):
+            form.listPair.append_entry()
+            form.listPair
+
+        for(guide, entry) in zip(images, form.listPair.entries):
+            entry.label = "../" + guide.image
+
+    if request.method == 'POST':
+
+        for(guide, entry) in zip(images, form.listPair.entries):
+            entryData = entry.data
+            newImage = entryData.get('image')
+            newCaption = entryData.get('caption')
+            guide.image = newImage
+            guide.caption = newCaption
+            db.session.commit()
+            flash("Changes saved successfully.")
+
+        return redirect(url_for('home'))
+
+    return render_template('edit.html', form=form, guide=guide, images=images)
 
 
 
