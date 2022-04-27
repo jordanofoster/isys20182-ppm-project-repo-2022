@@ -5,7 +5,7 @@ from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 from flask_cors import cross_origin
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
+from flask_login import UserMixin, AnonymousUserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileRequired, FileAllowed
 from sqlalchemy import null
@@ -40,6 +40,7 @@ db = SQLAlchemy(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
+login_manager.login_message = "Please login to continue."
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -98,6 +99,7 @@ class RegisterForm(FlaskForm):
 class LoginForm(FlaskForm):
     username = StringField(validators=[InputRequired(), Length(min=4, max=20)])
     password = PasswordField(validators=[InputRequired(), Length(min=4, max=20)])
+    next = HiddenField(validators=[InputRequired()])
     submit = SubmitField("Login")
 
 class NewGuideForm(FlaskForm):
@@ -157,12 +159,15 @@ def login():
             
             if bcrypt.check_password_hash(user.password, form.password.data):
                 login_user(user)
-                return redirect(url_for('home'))
-            
+                try:
+                    next_url = request.form.get('next')
+                    return redirect(next_url)
+                except:
+                    return redirect(url_for('home'))
+    
     return render_template('login.html', form=form)
 
 @app.route("/home", methods=['GET', 'POST'])
-@login_required
 def home():
 
     guides = Guides.query.all()
@@ -323,9 +328,8 @@ def editGuide(guide_id):
 
 
 @app.route("/guide/<int:guide_id>")
-@login_required
 def guide(guide_id):
-
+    
     guide = Guides.query.filter_by(id=guide_id).one()
     images = GuideImages.query.filter_by(guideID=guide_id).all()
     return render_template('guide.html', guide=guide, images=images)

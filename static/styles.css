@@ -201,6 +201,12 @@ h3 {
   
 }
 
+.edit {
+  margin-top: 12vh;
+  margin-bottom: 9vh;
+  width: 20vw;
+}
+
 .delete {
   background-color: red;
   margin-top: 12vh;
