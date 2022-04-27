@@ -303,10 +303,9 @@ def editGuide(guide_id):
 
         for i in range(len(images)):
             form.listPair.append_entry()
-            form.listPair
 
-        for(guide, entry) in zip(images, form.listPair.entries):
-            entry.label = "../" + guide.image
+        for(image, entry) in zip(images, form.listPair.entries):
+            entry.label = "../" + image.image
 
     if request.method == 'POST':
 
@@ -320,6 +319,8 @@ def editGuide(guide_id):
             flash("Changes saved successfully.")
 
         return redirect(url_for('home'))
+
+    print(images)
 
     return render_template('edit.html', form=form, guide=guide, images=images)
 
