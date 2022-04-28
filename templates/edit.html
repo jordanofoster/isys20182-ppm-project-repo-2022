@@ -8,6 +8,7 @@
 			<h2>Title</h2>
 			{{ form.title(class='inputBox') }}
 
+
 			{% for listPair in form.listPair %}
 				<div class="pair">
 					<img src="../{{listPair.label}}" >
@@ -15,6 +16,7 @@
 					<h3>New Caption:</h3> {{listPair.caption(class='captionBox', value=images[loop.index0].caption)}}
 				</div>
 			{% endfor %}
+			
 
 			{{ form.submit(class='submit') }}
 		</form>
