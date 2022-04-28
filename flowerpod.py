@@ -1,4 +1,5 @@
 import os, shutil
+from dotenv import load_dotenv
 from flask import Flask, render_template, url_for, redirect, request, flash
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
@@ -16,22 +17,24 @@ from flask_bcrypt import Bcrypt
 from tts import text_to_speech
 from werkzeug.utils import secure_filename
 
+#Loading our .env file
+load_dotenv()
+
 # Werkzeug vars
-UPLOAD_FOLDER = '/static/guides/images'
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+UPLOAD_FOLDER = os.getenv('WERKZEUG_UPLOAD_FOLDER')
+ALLOWED_EXTENSIONS = os.getenv('WERKZEUG_ALLOWED_EXTENSIONS')
 
 #Constructor
-app = Flask(__name__)
+app = Flask(os.getenv('FLASK_APPLICATION_NAME'))
 
 #Setting up static folder for images, css etc.
-app.static_folder = 'static'
+app.static_folder = os.getenv('FLASK_STATIC_FOLDER')
 
 bcrypt = Bcrypt(app)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
-app.config['SQLALCHEMY_BINDS'] = {'Guides' : 'sqlite:///guides.db',
-                                    'GuideImages' : 'sqlite:///guide-images.db'}
-app.config['SECRET_KEY'] = '\xef;\x96=\x11DE\xe2S\x91\x8a2'
+app.config['SQLALCHEMY_BINDS'] = { 'Guides' : 'sqlite:///guides.db', 'GuideImages' : 'sqlite:///guide-images.db'}
+app.config['SECRET_KEY'] = os.getenv('FLASK_SECRET_KEY')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 db = SQLAlchemy(app)

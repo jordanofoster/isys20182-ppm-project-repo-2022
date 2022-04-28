@@ -1,3 +1,5 @@
 __pycache__
-guides/images/*
+guides/images/
+.replit
+.env
 *.db
