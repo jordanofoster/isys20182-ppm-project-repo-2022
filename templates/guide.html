@@ -1,31 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
+{% extends "base.html" %}
 
-	<meta charset="UTF-8">
-	<meta http-equiv="U-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	
-	<title>Guide</title>
-	
-	<link rel="shortcut icon" href="../static/favicon.png"> <!-- "{{url_for('static', filename='favicon.png')}}" -->
-	<link rel="stylesheet" href="{{url_for('static', filename='styles.css')}}">
-	
-</head>
-
-<body class="minWidth">
-
-	<div class="divider">
-	
-		<nav class="menu">	
-		
-			<a class="button" href="{{url_for('home')}}">Home</a><a class="button" href="{{url_for('newGuide')}}">New Guide</a>				
-		
-		</nav>
-		
-	</div>
-	
-	<div class="minPage">
+{% block content %}
 
 	<!-- GUIDE.0/1/2/3 = ID/NAME/CREATOR/GUIDEIMAGES -->
 		<div class="form guideForm">
@@ -50,11 +25,5 @@
 		<a class="button edit" href="{{url_for('editGuide', guide_id=guide.id)}}">Edit Guide</a>
 	</nav>
 	
-	<nav class="menu">
-		<a class="button wide" href="{{url_for('logout')}}">Click to Logout</a>
-	</nav>
-
-</body>
-
-</html>
+{% endblock %}
 

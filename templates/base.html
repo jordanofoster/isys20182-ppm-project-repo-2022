@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+	<meta charset="UTF-8">
+	<meta http-equiv="U-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+	<title>{{htmlTitle}}</title>
+	
+	<link rel="shortcut icon" href="../static/favicon.png">
+	<link rel="stylesheet" href="{{url_for('static', filename='styles.css')}}">
+	
+</head>
+
+<body class="minWidth">
+
+	<div class="divider">
+	
+		<nav class="menu">	
+		
+			<a class="button" href="{{url_for('home')}}">Home</a><a class="button" href="{{url_for('newGuide')}}">New Guide</a>				
+		
+		</nav>
+		
+	</div>
+	
+	<div class="minPage">
+
+        {% block content %}
+
+        {% endblock %}
+
+	</div>
+
+	<nav class="menu">
+		<a class="button wide" href="{{url_for('logout')}}">Click to Logout</a>
+	</nav>
+
+</body>
+
+</html>
+

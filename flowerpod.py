@@ -1,5 +1,4 @@
-import os
-import shutil
+import os, shutil
 from flask import Flask, render_template, url_for, redirect, request, flash
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
@@ -140,10 +139,8 @@ def mainPage():
         text += " Here you can find gardening guides, tips and tricks!"
         text += " Make an account or sign in to get started."
         text_to_speech(text, "Male")
-        
-        return render_template('main-page.html', form=form)
     
-    return render_template('main-page.html', form=form)
+    return render_template('main-page.html', form=form, htmlTitle="Main Page")
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
@@ -159,26 +156,31 @@ def login():
                 login_user(user)
                 return redirect(url_for('home'))
             
-    return render_template('login.html', form=form)
+    return render_template('login.html', form=form, htmlTitle="Login")
+
+def getGuides(databaseGuides):
+    data, temp = [],[]
+
+    for guide in databaseGuides:
+        temp.append(guide.id)
+        temp.append(guide.title)
+        temp.append(guide.creator)
+        temp.append(GuideImages.query.filter_by(guideID=guide.id).all())
+        data.append(temp.copy())
+        temp.clear()
+
+    return data
 
 @app.route("/home", methods=['GET', 'POST'])
 @login_required
 def home():
 
     guides = Guides.query.all()
+    data = getGuides(guides)
 
-    data, temp = [],[]
+    return render_template('home.html', data=data, htmlTitle="Home")
 
-    for guide in guides:
-        temp.append(guide.id)
-        temp.append(guide.title)
-        temp.append(guide.creator)
-        temp.append(GuideImages.query.filter_by(guideID=guide.id).all())
 
-        data.append(temp.copy())
-        temp.clear()
-
-    return render_template('home.html', data=data)
 
 def allowed_file(filename):
     return "." in filename and \
@@ -227,7 +229,7 @@ def newGuide():
         #Return home when finished....
         return redirect(url_for('newGuideContent', guide_id=new_guide.id))
             
-    return render_template('new-guide.html', form=form)
+    return render_template('new-guide.html', form=form, htmlTitle="New Guide")
 
 @app.route(f"/new-guide-content/<int:guide_id>", methods=['GET', 'POST'])
 @login_required
@@ -257,7 +259,7 @@ def newGuideContent(guide_id):
 
     
 
-    return render_template('new-guide-content.html', form=form, guides=guideContent)
+    return render_template('new-guide-content.html', form=form, guides=guideContent, htmlTitle="New Guide")
 
 
 @app.route("/guide/<int:guide_id>/delete", methods=['GET', 'POST'])
@@ -374,7 +376,7 @@ def editGuide(guide_id):
 
         return redirect(url_for('home'))
 
-    return render_template('edit.html', form=form, guide=guide, images=images)
+    return render_template('edit.html', form=form, guide=guide, images=images, htmlTitle="Edit Guide")
 
 @app.route("/guide/<int:guide_id>")
 @login_required
@@ -382,7 +384,7 @@ def guide(guide_id):
 
     guide = Guides.query.filter_by(id=guide_id).one()
     images = GuideImages.query.filter_by(guideID=guide_id).all()
-    return render_template('guide.html', guide=guide, images=images)
+    return render_template('guide.html', guide=guide, images=images, htmlTitle=f"Guide {guide_id}")
 
 
 
@@ -405,7 +407,7 @@ def register():
 
         return redirect(url_for('login'))
     
-    return render_template('register.html', form=form)
+    return render_template('register.html', form=form, htmlTitle="Register")
 
 if __name__ == "__main__":
     app.run()

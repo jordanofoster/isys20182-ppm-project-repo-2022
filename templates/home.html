@@ -1,55 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
+{% extends "base.html" %}
 
-	<meta charset="UTF-8">
-	<meta http-equiv="U-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	
-	<title>Home</title>
-	
-	<link rel="shortcut icon" href="../static/favicon.png">
-	<link rel="stylesheet" href="{{url_for('static', filename='styles.css')}}">
-	
-</head>
+{% block content %}
 
-<body class="minWidth">
-
-	<div class="divider">
-	
-		<nav class="menu">	
-		
-			<a class="button" href="{{url_for('home')}}">Home</a><a class="button" href="{{url_for('newGuide')}}">New Guide</a>				
-		
-		</nav>
-		
-	</div>
-	
-	<div class="minPage">
-	
 	{% for guide in data %} <!--For GUIDE in the DATA list...-->
 
-	<!-- GUIDE.0/1/2/3 = ID/NAME/CREATOR/GUIDEIMAGES   
-		G
-	-->
-	
-	<a href={{url_for('guide', guide_id=guide.0) }}>
-	
-		<div class="guideBox"> <!-- Div is single line for aesthetic + removing white space. (</div><div> need to be touching ?)-->
-			<div class="gbImage"> <img class="thumbnail" src="../{{guide.3.0.image}}"> </div><div class="gbText"> <h3>{{guide.1}}</h3> </div>
+		<!-- GUIDE.0/1/2/3 = ID/NAME/CREATOR/GUIDEIMAGES   -->
 			
-		</div>
-	</a>
-		
+		<a href={{url_for('guide', guide_id=guide.0) }}>
+			
+			<div class="guideBox"> <!-- Div is single line for aesthetic + removing white space. (</div><div> need to be touching ?)-->
+				<div class="gbImage"> <img class="thumbnail" src="../{{guide.3.0.image}}"> </div><div class="gbText"> <h3>{{guide.1}}</h3> </div>
+			</div>
+		</a>
+			
 	{% endfor %}
-		
-	</div>
-
-	<nav class="menu">
-		<a class="button wide" href="{{url_for('logout')}}">Click to Logout</a>
-	</nav>
-
-</body>
-
-</html>
-
+			
+{% endblock %}
