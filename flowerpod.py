@@ -99,6 +99,10 @@ class LoginForm(FlaskForm):
     password = PasswordField(validators=[InputRequired(), Length(min=4, max=20)])
     submit = SubmitField("Login")
 
+class SearchForm(FlaskForm):
+    search = StringField("Search", validators=[InputRequired()])
+    submit = SubmitField("Search")
+
 class NewGuideForm(FlaskForm):
     title = StringField(validators=[InputRequired(), Length(min=5, max=50)])
     creator = StringField(validators=[InputRequired(), Length(min=5, max=30)])
@@ -166,6 +170,7 @@ def getGuides(databaseGuides):
         temp.append(guide.title)
         temp.append(guide.creator)
         temp.append(GuideImages.query.filter_by(guideID=guide.id).all())
+
         data.append(temp.copy())
         temp.clear()
 
@@ -175,11 +180,45 @@ def getGuides(databaseGuides):
 @login_required
 def home():
 
+    form = SearchForm()
     guides = Guides.query.all()
+
     data = getGuides(guides)
 
-    return render_template('home.html', data=data, htmlTitle="Home")
+    if form.validate_on_submit():
+        guide.search = form.search.data
+        guides = guides.filter(Guides.title.like('%' + guide.search + '%'))
+        guides = guides.order_by(Guides.title).all()
+        data = getGuides(guides)
 
+        return render_template("search.html", 
+                                form=form, 
+                                data=data, 
+                                search=guide.search, 
+                                htmlTitle="Search")
+
+    return render_template('home.html',
+                            form=form,
+                            data=data, 
+                            htmlTitle="Home")
+
+@app.route('/search', methods=["POST"])
+def search():
+
+    form = SearchForm()
+    guides = Guides.query
+
+    guide.search = form.search.data
+    guides = guides.filter(Guides.title.like('%' + guide.search + '%'))
+    guides = guides.order_by(Guides.title).all()
+    data = getGuides(guides)
+
+    return render_template("search.html",
+                            form=form,
+                            data=data,
+                            search=guide.search, 
+                            guides=guides, 
+                            htmlTitle="Search")
 
 
 def allowed_file(filename):

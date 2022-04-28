@@ -146,7 +146,7 @@ h3 {
 	margin-left: auto;
 	margin-right: auto;
   box-sizing: border-box;
-  border: 4px solid #b24a3a;
+  border: 4px solid #83362a;
 }
 
 .gbImage {
@@ -195,7 +195,7 @@ h3 {
   padding-bottom:2.25vh;
   background-color:#df5c48;
   box-sizing:border-box;
-  border:4px solid #b24a3a;
+  border:4px solid #83362a;
   margin:0;	
   position:relative;
   
@@ -229,6 +229,12 @@ h3 {
 {
   font-size:260%;
   width:80%;
+}
+
+.search
+{
+  margin-bottom: 18px;
+  height: 7vh;
 }
 
 .captionBox {
@@ -277,6 +283,29 @@ h3 {
   padding:30px;
   border: 4px solid #83362a;
 }
+
+.searchForm
+{
+  width: 60vw;
+}
+
+.searchSubmit
+{
+  width: 30vw;
+  height: 7vh;
+}
+
+.searchResult
+{
+  text-align:center;
+  font-size: 18px;
+  background-color:#df5c48;
+  margin:25px auto 25px auto;
+  width:70vw;
+  padding:0;
+  border: 4px solid #83362a;
+}
+
 
 #box
 {

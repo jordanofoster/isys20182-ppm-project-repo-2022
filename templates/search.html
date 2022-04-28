@@ -2,12 +2,17 @@
 
 {% block content %}
 
-	<!-- Search Bar -->
 	<form method="POST" action="{{url_for('search')}}" class="form guideForm" >
 		{{ form.hidden_tag() }}
 		{{ form.search(class='inputBox search') }}
 		{{ form.submit(class='searchSubmit') }}
 	</form>
+
+
+	<!-- Search Bar -->
+	<div class="searchResult">
+        <h2>Results for "{{search}}": </h2>
+	</div>
 		
 	{% for guide in data %} <!--For GUIDE in the DATA list...-->
 
@@ -21,5 +26,5 @@
 		</a>
 			
 	{% endfor %}
-			
+
 {% endblock %}
