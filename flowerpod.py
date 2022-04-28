@@ -156,7 +156,6 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         next_url = request.form.get('next')
-
         if user:
             
             if bcrypt.check_password_hash(user.password, form.password.data):
@@ -423,7 +422,7 @@ def editGuide(guide_id):
 
 @app.route("/guide/<int:guide_id>")
 def guide(guide_id):
-
+    
     guide = Guides.query.filter_by(id=guide_id).one()
     images = GuideImages.query.filter_by(guideID=guide_id).all()
     return render_template('guide.html', guide=guide, images=images, htmlTitle=f"Guide {guide_id}")
