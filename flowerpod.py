@@ -22,7 +22,7 @@ load_dotenv()
 
 # Werkzeug vars
 UPLOAD_FOLDER = os.getenv('WERKZEUG_UPLOAD_FOLDER')
-ALLOWED_EXTENSIONS = os.getenv('WERKZEUG_ALLOWED_EXTENSIONS')
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 #Constructor
 app = Flask(__name__)
