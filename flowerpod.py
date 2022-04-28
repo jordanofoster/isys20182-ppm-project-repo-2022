@@ -25,7 +25,7 @@ UPLOAD_FOLDER = os.getenv('WERKZEUG_UPLOAD_FOLDER')
 ALLOWED_EXTENSIONS = os.getenv('WERKZEUG_ALLOWED_EXTENSIONS')
 
 #Constructor
-app = Flask(os.getenv('FLASK_APPLICATION_NAME'))
+app = Flask(__name__)
 
 #Setting up static folder for images, css etc.
 app.static_folder = os.getenv('FLASK_STATIC_FOLDER')
