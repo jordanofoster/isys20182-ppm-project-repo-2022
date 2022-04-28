@@ -199,18 +199,21 @@ def newGuide():
         pathString = f'{app.root_path}{UPLOAD_FOLDER}/{form.title.data.replace(" ", "_")}'
         os.makedirs(pathString)
 
-        for image in form.images.data:
-            #Created enumerate for count (creates selection order priority..)
+        for i, image in enumerate(form.images.data):
 
             #ISSUE: 
             #SELECT ORDER OF IMAGES IN FORM DOES NOT AFFECT ORDER IN FLASK.
             #UPLOAD ORDER IS BASED ON FILEEXPLORER SORT METHOD.
             #No workarounds found.
 
-            image_filename = secure_filename(image.filename)
+            ext = image.filename.rfind(".")
+            image_ext = image.filename[ext:]
+
+            image_filename = f'{i+1}{image_ext}'
+
             image.save(os.path.join(pathString, image_filename))
             imageURI = f'{pathString}/{image_filename}'
-            
+
             #REMOVE WHOLE PATH-ONLY UP TO STATIC/../../../imagename.filetype
             index = imageURI.find("static/")
             imageURI = imageURI[index-1:]
@@ -265,22 +268,25 @@ def deleteGuide(guide_id):
 
     title = toDelGuide.title
     title = title.replace(" ", "_")
-    path = f"{UPLOAD_FOLDER[1:]}/{title}"
-
+    path = f"{app.root_path}/{UPLOAD_FOLDER[1:]}/{title}"
+    print("\nTrying to delete guide...")
     try:
         shutil.rmtree(path)
+        print(f"Deleted guides folder and folder content at {path}")
         db.session.delete(toDelGuide)
         for image in toDelImages:
             db.session.delete(image)
         db.session.commit()
         flash("Guide deleted.")
+        print(f"Removed from guides.db --> {toDelGuide.title} (ID:{toDelGuide.id})\n")
 
     except:
+        print("Error deleting path")
         db.session.delete(toDelGuide)
         for image in toDelImages:
             db.session.delete(image)
         db.session.commit()
-        flash("Guide deleted.")
+        print(f"Removed from guides.db --> {toDelGuide.title} (ID:{toDelGuide.id})\n")
 
     return redirect(url_for('home'))
 
@@ -298,29 +304,77 @@ def editGuide(guide_id):
 
         for i in range(len(images)):
             form.listPair.append_entry()
-            form.listPair
 
-        for(guide, entry) in zip(images, form.listPair.entries):
-            entry.label = "../" + guide.image
+        for(image, entry) in zip(images, form.listPair.entries):
+            entry.label = "../" + image.image
 
     if request.method == 'POST':
 
-        for(guide, entry) in zip(images, form.listPair.entries):
+        if form.title.data != guide.title:
+
+            #CHANGING ALL PATHS RELATED TO A NEW GUIDE TITLE
+
+            ogPath = f'{app.root_path}{UPLOAD_FOLDER}/{guide.title.replace(" ", "_")}'
+
+            #Update the guide title in DB
+            guide.title = form.title.data
+            db.session.commit()
+
+            newPath = f'{app.root_path}{UPLOAD_FOLDER}/{form.title.data.replace(" ", "_")}'
+
+            os.rename(ogPath, newPath)
+
+
+            #Changing each image path to fit the new path
+            for image in images:
+                x = image.image.rfind("/")
+                imageName = image.image[x+1:]
+                
+                image.image = f'{UPLOAD_FOLDER}/{form.title.data.replace(" ", "_")}/{imageName}'
+                
+            db.session.commit()
+
+        for(guideImage, entry) in zip(images, form.listPair.entries):
             entryData = entry.data
             newImage = entryData.get('image')
+
             newCaption = entryData.get('caption')
-            guide.image = newImage
-            guide.caption = newCaption
+
+            if str(newImage) == "<FileStorage: '' ('application/octet-stream')>":
+                #FileField is left blank...
+                pass
+            else:
+                #FileField is not blank
+
+                #Index for guideImage W/O .filetype
+                x = guideImage.image.rfind(".")
+                #Index for newImage .filetype
+                y = newImage.filename.rfind(".")
+
+                #Index for upload_folder / guide title
+                z = guideImage.image.rfind("/")
+
+                #imgName = guideImage up to .filetype + newImage past .filetype
+                #example - oldImage : 1.png --> newImage :randomfile.jpeg
+                #imgName merges into 1.jpeg while saving newImage in oldImage spot.
+
+                os.remove(f'{app.root_path}{guideImage.image}')
+
+                imgName = f"{guideImage.image[:x][z:]}{newImage.filename[y:]}"
+                newImage.save(f'{app.root_path}/{UPLOAD_FOLDER}/{form.title.data.replace(" ", "_")}/{imgName}')
+
+                
+                newImage = f'{UPLOAD_FOLDER}/{form.title.data.replace(" ", "_")}/{imgName}'
+                guideImage.image = newImage
+                db.session.commit()
+
+            guideImage.caption = newCaption
             db.session.commit()
             flash("Changes saved successfully.")
 
         return redirect(url_for('home'))
 
     return render_template('edit.html', form=form, guide=guide, images=images)
-
-
-
-
 
 @app.route("/guide/<int:guide_id>")
 @login_required

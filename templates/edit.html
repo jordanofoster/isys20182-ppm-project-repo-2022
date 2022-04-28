@@ -6,7 +6,7 @@
 	<meta http-equiv="U-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	
-	<title>New Guide</title>
+	<title>Edit Guide</title>
 	
 	<link rel="shortcut icon" href="../static/favicon.png">
 	<link rel="stylesheet" href="{{url_for('static', filename='styles.css')}}">
@@ -35,8 +35,9 @@
 
 				{% for listPair in form.listPair %}
 					<div class="pair">
+						<img src="../{{listPair.label}}" >
 						<h3>New Image:</h3> {{listPair.image(class='File')}}
-						<h3>New Caption:</h3> {{listPair.caption(class='captionBox')}}
+						<h3>New Caption:</h3> {{listPair.caption(class='captionBox', value=images[loop.index0].caption)}}
 					</div>
 				{% endfor %}
 
@@ -44,7 +45,9 @@
 			</form>
 			
 		</div>
-		
+		<nav class="menu">
+			<a class="button delete" href="{{url_for('deleteGuide', guide_id=guide.id)}}">!Delete!</a>
+		</nav>
 	</div>	
 	
 	
