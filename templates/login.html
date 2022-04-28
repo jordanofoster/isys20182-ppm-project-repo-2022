@@ -7,7 +7,9 @@
 		<h1>Account Login</h1>
 		
 		<form method="POST" action="">
-		
+			
+			<input type="hidden" name="next" value="{{ request.args.get('next', '') }}" />
+
 			{{ form.hidden_tag() }}
 			
 			<h2>Username</h2>
@@ -23,7 +25,8 @@
 	</div>
 	
 	<div class ="center">
-			
+		<a class="button" href="{{url_for('home')}}">Login as Guest</a> 
+
 		<p><a id="hLink" href="{{url_for('register')}}">Need an account?</a></p>
 			
 		<p><a id="hLink" href="{{url_for('mainPage')}}">Go back</a></p>
