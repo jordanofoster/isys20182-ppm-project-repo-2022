@@ -239,40 +239,44 @@ def newGuide():
 
     if request.method == 'POST':
 
-        new_guide = Guides(title=form.title.data, creator=str(current_user.username))
-        db.session.add(new_guide)
-        db.session.commit()
-
         pathString = f'{app.root_path}{UPLOAD_FOLDER}/{form.title.data.replace(" ", "_")}'
-        os.makedirs(pathString)
 
-        for i, image in enumerate(form.images.data):
+        try:
+            os.makedirs(pathString)
 
-            #ISSUE: 
-            #SELECT ORDER OF IMAGES IN FORM DOES NOT AFFECT ORDER IN FLASK.
-            #UPLOAD ORDER IS BASED ON FILEEXPLORER SORT METHOD.
-            #No workarounds found.
-
-            ext = image.filename.rfind(".")
-            image_ext = image.filename[ext:]
-
-            image_filename = f'{i+1}{image_ext}'
-
-            image.save(os.path.join(pathString, image_filename))
-            imageURI = f'{pathString}/{image_filename}'
-
-            #REMOVE WHOLE PATH-ONLY UP TO STATIC/../../../imagename.filetype
-            index = imageURI.find("static/")
-            imageURI = imageURI[index-1:]
-
-            new_image = GuideImages(guideID=new_guide.id, image=imageURI)
-            db.session.add(new_image)
+            new_guide = Guides(title=form.title.data, creator=str(current_user.username))
+            db.session.add(new_guide)
             db.session.commit()
 
-        print(f"Num files: {len(request.files.getlist(form.images.name))}")
+            for i, image in enumerate(form.images.data):
 
-        #Return home when finished....
-        return redirect(url_for('newGuideContent', guide_id=new_guide.id))
+                #ISSUE: 
+                #SELECT ORDER OF IMAGES IN FORM DOES NOT AFFECT ORDER IN FLASK.
+                #UPLOAD ORDER IS BASED ON FILEEXPLORER SORT METHOD.
+                #No workarounds found.
+
+                ext = image.filename.rfind(".")
+                image_ext = image.filename[ext:]
+
+                image_filename = f'{i+1}{image_ext}'
+
+                image.save(os.path.join(pathString, image_filename))
+                imageURI = f'{pathString}/{image_filename}'
+
+                #REMOVE WHOLE PATH-ONLY UP TO STATIC/../../../imagename.filetype
+                index = imageURI.find("static/")
+                imageURI = imageURI[index-1:]
+
+                new_image = GuideImages(guideID=new_guide.id, image=imageURI, caption="null")
+                db.session.add(new_image)
+                db.session.commit()
+
+            print(f"Num files: {len(request.files.getlist(form.images.name))}")
+
+            #Return home when finished....
+            return redirect(url_for('newGuideContent', guide_id=new_guide.id))
+        except:
+            pass
             
     return render_template('new-guide.html', form=form, htmlTitle="New Guide")
 
@@ -381,7 +385,8 @@ def editGuide(guide_id):
                 
             db.session.commit()
 
-        for(guideImage, entry) in zip(images, form.listPair.entries):
+        for i, (guideImage, entry) in enumerate(zip(images, form.listPair.entries)):
+            
             entryData = entry.data
             newImage = entryData.get('image')
 
@@ -392,23 +397,22 @@ def editGuide(guide_id):
                 pass
             else:
                 #FileField is not blank
-
-                #Index for guideImage W/O .filetype
-                x = guideImage.image.rfind(".")
                 #Index for newImage .filetype
-                y = newImage.filename.rfind(".")
+                x = newImage.filename.rfind(".")
 
-                #Index for upload_folder / guide title
-                z = guideImage.image.rfind("/")
+                try:
+                    os.remove(f'{app.root_path}{guideImage.image}')
+                except:
+                    pass
+                
+                imgName = f"{i+1}{newImage.filename[x:]}"
 
-                #imgName = guideImage up to .filetype + newImage past .filetype
-                #example - oldImage : 1.png --> newImage :randomfile.jpeg
-                #imgName merges into 1.jpeg while saving newImage in oldImage spot.
 
-                os.remove(f'{app.root_path}{guideImage.image}')
-
-                imgName = f"{guideImage.image[:x][z:]}{newImage.filename[y:]}"
-                newImage.save(f'{app.root_path}/{UPLOAD_FOLDER}/{form.title.data.replace(" ", "_")}/{imgName}')
+                try:
+                    newImage.save(f'{app.root_path}/{UPLOAD_FOLDER}/{form.title.data.replace(" ", "_")}/{imgName}')
+                except:
+                    os.mkdir(f'{app.root_path}/{UPLOAD_FOLDER}/{form.title.data.replace(" ", "_")}')
+                    newImage.save(f'{app.root_path}/{UPLOAD_FOLDER}/{form.title.data.replace(" ", "_")}/{imgName}')
 
                 
                 newImage = f'{UPLOAD_FOLDER}/{form.title.data.replace(" ", "_")}/{imgName}'
